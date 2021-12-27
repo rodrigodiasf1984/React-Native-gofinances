@@ -1,5 +1,4 @@
 import styled from "styled-components/native";
-import theme from "../../global/styles/theme";
 
 export const Container = styled.View`
   flex: 1;
@@ -10,6 +9,7 @@ export const Container = styled.View`
 
 export const Title = styled.Text`
   font-size: 24px;
+  font-family: ${({ theme }) => theme.fonts.bold};
   color: ${({ theme }) => theme.colors.title};
   font-weight: bold;
 `;
