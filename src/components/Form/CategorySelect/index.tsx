@@ -5,7 +5,7 @@ import { Container, Icon, Category } from "./styles";
 type CategoryProps = {
   title: string;
 };
-function CategorySelect({ title }: CategoryProps) {
+export function CategorySelect({ title }: CategoryProps) {
   return (
     <Container>
       <Category>{title}</Category>
@@ -13,5 +13,3 @@ function CategorySelect({ title }: CategoryProps) {
     </Container>
   );
 }
-
-export default CategorySelect;
