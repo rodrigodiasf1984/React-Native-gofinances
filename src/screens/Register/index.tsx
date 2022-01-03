@@ -1,8 +1,9 @@
 import React, { useState } from "react";
+import { Modal } from "react-native";
 import { Button } from "../../components/Form/Button";
-import { Input } from "../../components/Form/Input";
+import { InputForm } from "../../components/Form/InputForm";
 import TransactionTypeButton from "../../components/Form/TransactionTypeButton";
-import { CategorySelect } from "../../components/Form/CategorySelect";
+import { CategorySelectButton } from "../../components/Form/CategorySelectButton";
 
 import {
   Container,
@@ -12,9 +13,33 @@ import {
   Fields,
   TransactionsTypes,
 } from "./styles";
+import { CategorySelect } from "../CategorySelect";
+import { useForm } from "react-hook-form";
+
+type FormData = {
+  name: string;
+  amount: string;
+};
 
 export function Register() {
   const [transactionType, setTransactionType] = useState("");
+  const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+  const [category, setCategory] = useState({
+    key: "category",
+    name: "Categoria",
+  });
+  const { control, handleSubmit } = useForm();
+
+  const handleRegister = (form: FormData) => {
+    const { name, amount } = form;
+    const data = {
+      name,
+      amount,
+      transactionType,
+      category: category.key,
+    };
+    console.log("form", data);
+  };
 
   return (
     <Container>
@@ -23,8 +48,8 @@ export function Register() {
       </Header>
       <Form>
         <Fields>
-          <Input placeholder="Nome" />
-          <Input placeholder="Preço" />
+          <InputForm name="name" control={control} placeholder="Nome" />
+          <InputForm name="amount" control={control} placeholder="Preço" />
           <TransactionsTypes>
             <TransactionTypeButton
               isActive={transactionType === "up"}
@@ -39,10 +64,20 @@ export function Register() {
               onPress={() => setTransactionType("down")}
             />
           </TransactionsTypes>
-          <CategorySelect title="Categoria" />
+          <CategorySelectButton
+            onPress={() => setCategoryModalOpen(true)}
+            title={category.name}
+          />
         </Fields>
-        <Button title="Enviar" />
+        <Button title="Enviar" onPress={handleSubmit(handleRegister)} />
       </Form>
+      <Modal visible={categoryModalOpen}>
+        <CategorySelect
+          category={category}
+          setCategory={setCategory}
+          closeSelectedCategory={() => setCategoryModalOpen(false)}
+        />
+      </Modal>
     </Container>
   );
 }

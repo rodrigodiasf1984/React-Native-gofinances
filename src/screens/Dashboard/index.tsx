@@ -102,5 +102,3 @@ export function Dashboard() {
     </Container>
   );
 }
-
-export default Dashboard;
