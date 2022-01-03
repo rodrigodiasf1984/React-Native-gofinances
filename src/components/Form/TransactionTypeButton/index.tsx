@@ -14,7 +14,7 @@ const icons = {
   down: "arrow-down-circle",
 };
 
-function TransactionTypeButton({
+export function TransactionTypeButton({
   title,
   type,
   isActive,
@@ -27,5 +27,3 @@ function TransactionTypeButton({
     </Container>
   );
 }
-
-export default TransactionTypeButton;

@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { Keyboard, Modal, TouchableWithoutFeedback, Alert } from "react-native";
-import { Button } from "../../components/Form/Button";
-import { InputForm } from "../../components/Form/InputForm";
-import TransactionTypeButton from "../../components/Form/TransactionTypeButton";
-import { CategorySelectButton } from "../../components/Form/CategorySelectButton";
+import {
+  Button,
+  InputForm,
+  TransactionTypeButton,
+  CategorySelectButton,
+} from "../../components/Form";
+
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 

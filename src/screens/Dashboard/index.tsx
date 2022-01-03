@@ -1,9 +1,9 @@
 import React from "react";
-import { HighlightCard } from "../../components/HighlightCard";
 import {
+  HighlightCard,
   TransactionCard,
   ITransactionCardProps,
-} from "../../components/TransactionCard";
+} from "../../components";
 
 import {
   Container,
