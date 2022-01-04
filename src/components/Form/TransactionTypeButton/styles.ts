@@ -1,7 +1,10 @@
 import styled, { css } from "styled-components/native";
-import { TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { RFValue } from "react-native-responsive-fontsize";
+import {
+  GestureHandlerRootView,
+  RectButton,
+} from "react-native-gesture-handler";
 
 interface TypeProps {
   type: "up" | "down";
@@ -11,15 +14,13 @@ interface ContainerProps extends TypeProps {
   isActive: boolean;
 }
 
-export const Container = styled(TouchableOpacity)<ContainerProps>`
+export const Main = styled.View<ContainerProps>`
   width: 48%;
-  flex-direction: row;
-  align-items: center;
   border: 1.5px solid ${({ theme }) => theme.colors.text};
   border-radius: 5px;
-  padding: 16px;
+  flex-direction: row;
   justify-content: center;
-
+  align-items: center;
   ${({ theme, isActive, type }) =>
     isActive &&
     type === "up" &&
@@ -35,6 +36,18 @@ export const Container = styled(TouchableOpacity)<ContainerProps>`
       background-color: ${theme.colors.error_light};
       border: none;
     `}
+`;
+
+export const Container = styled(GestureHandlerRootView)`
+  width: 100%;
+`;
+
+export const Button = styled(RectButton)`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  width: 100%;
 `;
 
 export const Icon = styled(Feather)<TypeProps>`
