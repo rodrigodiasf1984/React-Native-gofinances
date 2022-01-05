@@ -1,7 +1,8 @@
 import React from "react";
 import { ThemeProvider } from "styled-components/native";
+import "intl";
+import "intl/locale-data/jsonp/pt-BR";
 
-import { Register } from "./src/screens";
 import theme from "./src/global/styles/theme";
 
 import {
