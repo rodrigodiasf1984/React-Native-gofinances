@@ -67,14 +67,16 @@ export function Register() {
     if (category.key === "category") {
       return Alert.alert("Selecione uma categoria");
     }
+
     const newTransaction = {
       id: uuid.v4().toString(),
       name,
       amount,
-      transactionType,
+      type: transactionType,
       category: category.key,
       date: new Date(),
     };
+
     try {
       const dataKeyAsyncStorage = "@goginances:transactions";
       const data = await AsyncStorage.getItem(dataKeyAsyncStorage);
@@ -121,16 +123,16 @@ export function Register() {
             />
             <TransactionsTypes>
               <TransactionTypeButton
-                isActive={transactionType === "up"}
+                isActive={transactionType === "positive"}
                 title="Entrada"
                 type="up"
-                onPress={() => setTransactionType("up")}
+                onPress={() => setTransactionType("positive")}
               />
               <TransactionTypeButton
-                isActive={transactionType === "down"}
+                isActive={transactionType === "negative"}
                 title="Saída"
                 type="down"
-                onPress={() => setTransactionType("down")}
+                onPress={() => setTransactionType("negative")}
               />
             </TransactionsTypes>
             <CategorySelectButton

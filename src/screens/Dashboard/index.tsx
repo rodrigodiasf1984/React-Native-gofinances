@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   HighlightCard,
   TransactionCard,
@@ -6,6 +6,8 @@ import {
 } from "../../components";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
+import { ActivityIndicator } from "react-native";
 
 import {
   Container,
@@ -22,22 +24,47 @@ import {
   TransactionsTitle,
   TransactionsList,
   LogoutButton,
+  LoadContainer,
 } from "./styles";
+import { useTheme } from "styled-components";
 
 export interface DataListProps extends ITransactionCardProps {
   id: string;
 }
+type HighlightProps = {
+  amount: string;
+};
+
+type HighlightData = {
+  entries: HighlightProps;
+  withdrawals: HighlightProps;
+  total: HighlightProps;
+};
 
 export function Dashboard() {
-  const [data, setData] = useState<DataListProps[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [transactions, setTransactions] = useState<DataListProps[]>([]);
+  const [highlightData, setHighlightData] = useState<HighlightData>(
+    {} as HighlightData
+  );
   const dataKeyAsyncStorage = "@goginances:transactions";
+  const theme = useTheme();
 
   async function loadTransactions() {
     await AsyncStorage.getItem(dataKeyAsyncStorage).then((response) => {
       const transactions = response ? JSON.parse(response) : [];
 
+      let entriesTotal = 0;
+      let withdrawalsTotal = 0;
+
       const formattedTransactions: DataListProps[] = transactions.map(
         (transaction: DataListProps) => {
+          if (transaction.type === "positive") {
+            entriesTotal += Number(transaction.amount);
+          } else {
+            withdrawalsTotal += Number(transaction.amount);
+          }
+
           const amount = Number(transaction.amount).toLocaleString("pt-BR", {
             style: "currency",
             currency: "BRL",
@@ -59,7 +86,29 @@ export function Dashboard() {
           };
         }
       );
-      setData(formattedTransactions);
+      setTransactions(formattedTransactions);
+      const total = entriesTotal - withdrawalsTotal;
+      setHighlightData({
+        entries: {
+          amount: entriesTotal.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          }),
+        },
+        withdrawals: {
+          amount: withdrawalsTotal.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          }),
+        },
+        total: {
+          amount: total.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          }),
+        },
+      });
+      setIsLoading(false);
     });
   }
 
@@ -67,54 +116,68 @@ export function Dashboard() {
     loadTransactions();
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      loadTransactions();
+    }, [])
+  );
+
   return (
     <Container>
-      <Header>
-        <UserWrapper>
-          <UserInfo>
-            <Photo
-              source={{
-                uri: "https://avatars.githubusercontent.com/u/30758309?v=4",
-              }}
+      {isLoading ? (
+        <LoadContainer>
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+        </LoadContainer>
+      ) : (
+        <>
+          <Header>
+            <UserWrapper>
+              <UserInfo>
+                <Photo
+                  source={{
+                    uri: "https://avatars.githubusercontent.com/u/30758309?v=4",
+                  }}
+                />
+                <User>
+                  <UserGreetings>Olá,</UserGreetings>
+                  <UserName>Rodrigo</UserName>
+                </User>
+              </UserInfo>
+              <LogoutButton onPress={() => {}}>
+                <Icon name="power" />
+              </LogoutButton>
+            </UserWrapper>
+          </Header>
+          <HighlightCards>
+            <HighlightCard
+              type="income"
+              title="Entradas"
+              amount={highlightData.entries.amount}
+              lastTransaction="Última entrada dia 13 de Abril"
             />
-            <User>
-              <UserGreetings>Olá,</UserGreetings>
-              <UserName>Rodrigo</UserName>
-            </User>
-          </UserInfo>
-          <LogoutButton onPress={() => {}}>
-            <Icon name="power" />
-          </LogoutButton>
-        </UserWrapper>
-      </Header>
-      <HighlightCards>
-        <HighlightCard
-          type="income"
-          title="Entradas"
-          amount="R$17.400,00"
-          lastTransaction="Última entrada dia 13 de Abril"
-        />
-        <HighlightCard
-          type="outcome"
-          title="Saídas"
-          amount="R$1.259,00"
-          lastTransaction="Última entrada dia 03 de Abril"
-        />
-        <HighlightCard
-          type="total"
-          title="Total"
-          amount="R$16.141,00"
-          lastTransaction="01 à 16 de Abril"
-        />
-      </HighlightCards>
-      <Transactions>
-        <TransactionsTitle>Listagem</TransactionsTitle>
-        <TransactionsList
-          data={data}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <TransactionCard data={item} />}
-        />
-      </Transactions>
+            <HighlightCard
+              type="outcome"
+              title="Saídas"
+              amount={highlightData.withdrawals.amount}
+              lastTransaction="Última entrada dia 03 de Abril"
+            />
+            <HighlightCard
+              type="total"
+              title="Total"
+              amount={highlightData.total.amount}
+              lastTransaction="01 à 16 de Abril"
+            />
+          </HighlightCards>
+          <Transactions>
+            <TransactionsTitle>Listagem</TransactionsTitle>
+            <TransactionsList
+              data={transactions}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => <TransactionCard data={item} />}
+            />
+          </Transactions>
+        </>
+      )}
     </Container>
   );
 }
