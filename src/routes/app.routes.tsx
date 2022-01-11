@@ -1,6 +1,6 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Register, Dashboard } from "../screens";
+import { Register, Dashboard, Resume } from "../screens";
 import { useTheme } from "styled-components";
 import { Platform } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -51,7 +51,7 @@ export function AppRoutes() {
           ),
         }}
         name="Resumo"
-        component={Register}
+        component={Resume}
       />
     </Navigator>
   );
